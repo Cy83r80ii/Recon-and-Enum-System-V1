@@ -1,0 +1,41 @@
+✔ async scanning
+✔ request pooling
+✔ smarter payload selection
+✔ duplicate filtering
+
+1️⃣ Directory brute forcing
+
+/admin
+/.git
+/.env
+/backup.zip
+
+2️⃣ Subdomain discovery
+
+api.site.com
+dev.site.com
+admin.site.com
+
+3️⃣ API endpoint fuzzing
+
+/api/v1/
+/graphql
+/swagger.json
+1️⃣ Better SQLi detection
+
+error-based
+boolean-based
+time-based
+
+2️⃣ Better XSS detection
+
+3️⃣ Directory brute forcing
+
+4️⃣ Subdomain discovery
+
+5️⃣ Async scanning engine
+1️⃣ Fix slow scans (10× faster engine)
+2️⃣ Improve SQLi / XSS detection accuracy
+3️⃣ Add aggressive scan mode
+
+4️⃣ Connect frontend dashboard to backend

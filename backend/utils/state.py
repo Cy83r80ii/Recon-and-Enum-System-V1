@@ -1,0 +1,2 @@
+SCAN_RESULTS = []
+SCAN_STATUS = "idle"

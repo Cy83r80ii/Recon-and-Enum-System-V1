@@ -1,0 +1,9 @@
+venv/
+team07_032_034_053/
+.env
+node_modules/
+__pycache__/
+.env
+dist/
+build/
+others/
