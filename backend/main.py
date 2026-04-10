@@ -12,7 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all (for now)
+    allow_origins=["https://recon-and-enum-system-v1.vercel.app"],# allow all (for now)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

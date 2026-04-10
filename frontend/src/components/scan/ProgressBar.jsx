@@ -15,8 +15,9 @@ const res = await axios.get("http://127.0.0.1:8001/progress")
 
 setProgress(res.data.progress)
 
-}catch(e){}
-
+}catch(e){
+console.error("Error fetching progress:",e)
+}
 },1000)
 
 return ()=>clearInterval(interval)
