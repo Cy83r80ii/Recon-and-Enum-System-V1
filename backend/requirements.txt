@@ -27,7 +27,6 @@ markdown-it-py==4.0.0
 mdurl==0.1.2
 multidict==6.7.1
 packaging==26.0
-paramspider @ file:///home/cy83r80ii/Documents/projects/final_year/ARES-X/ParamSpider
 passlib==1.7.4
 pillow==12.1.1
 propcache==0.4.1
