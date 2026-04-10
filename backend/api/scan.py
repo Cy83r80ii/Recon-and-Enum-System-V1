@@ -5,14 +5,12 @@ from utils import state
 
 router = APIRouter()
 
-
 class ScanRequest(BaseModel):
     target: str
     mode: str = "quick"
 
-
 @router.post("/scan")
-def scan(req: ScanRequest):
+async def scan(req: ScanRequest):
 
     state.SCAN_STATUS = "running"
 
