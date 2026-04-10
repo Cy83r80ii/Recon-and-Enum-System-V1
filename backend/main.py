@@ -86,6 +86,9 @@ async def start_scan(data: dict):
         "total_findings": len(findings)
     }
 
+@app.get("/")
+def home():
+    return {"message": "Backend is running"}
 
 # ---------------------------------
 # RESULTS
