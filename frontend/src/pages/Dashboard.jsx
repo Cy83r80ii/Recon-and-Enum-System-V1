@@ -10,155 +10,123 @@ import VulnerabilityCards from "../components/stats/VulnerabilityCards";
 
 export default function Dashboard() {
 
-const [findings,setFindings] = useState([]);
+  const [findings, setFindings] = useState([]);
 
-const [stats,setStats] = useState({
-critical:0,
-high:0,
-medium:0,
-low:0,
-total:0
-});
+  const [stats, setStats] = useState({
+    critical: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+    total: 0
+  });
 
-const [progress,setProgress] = useState(0);
-const [logs,setLogs] = useState([]);
+  const [progress, setProgress] = useState(0);
+  const [logs, setLogs] = useState([]);
 
-useEffect(()=>{
+  useEffect(() => {
 
-const interval = setInterval(async()=>{
+    const API = import.meta.env.VITE_API_URL;
 
-try{
+    const interval = setInterval(async () => {
 
-// results
-const res = await axios.get("http://127.0.0.1:8001/results");
-const findingsData = res.data.findings || [];
+      // 🔹 RESULTS
+      try {
+        const res = await axios.get(`${API}/results`);
+        const findingsData = res.data.findings || [];
 
-setFindings(findingsData);
+        setFindings(findingsData);
 
-// compute severity stats
-let critical=0;
-let high=0;
-let medium=0;
-let low=0;
+        let critical = 0;
+        let high = 0;
+        let medium = 0;
+        let low = 0;
 
-findingsData.forEach(f=>{
+        findingsData.forEach(f => {
+          const sev = (f.severity || "").toLowerCase();
+          if (sev === "critical") critical++;
+          if (sev === "high") high++;
+          if (sev === "medium") medium++;
+          if (sev === "low") low++;
+        });
 
-const sev = (f.severity || "").toLowerCase();
+        setStats({
+          critical,
+          high,
+          medium,
+          low,
+          total: findingsData.length
+        });
 
-if(sev==="critical") critical++;
-if(sev==="high") high++;
-if(sev==="medium") medium++;
-if(sev==="low") low++;
+      } catch (e) {
+        console.error("Results error:", e);
+      }
 
-});
+      // 🔹 PROGRESS
+      try {
+        const p = await axios.get(`${API}/progress`);
+        setProgress(p.data.progress || 0);
+      } catch (e) {
+        console.error("Progress error:", e);
+      }
 
-setStats({
-critical,
-high,
-medium,
-low,
-total:findingsData.length
-});
+      // 🔹 LOGS
+      try {
+        const l = await axios.get(`${API}/logs`);
+        setLogs(l.data.logs || []);
+      } catch (e) {
+        console.error("Logs error:", e);
+      }
 
-}catch(e){}
+    }, 2000);
 
-// progress
-try{
+    return () => clearInterval(interval);
 
-const p = await axios.get("http://127.0.0.1:8001/progress");
-setProgress(p.data.progress || 0);
+  }, []);
 
-}catch(e){}
+  return (
+    <div className="dashboard">
 
-// logs
-try{
+      <h1 className="title">ARES‑X Security Scanner</h1>
 
-const l = await axios.get("http://127.0.0.1:8001/logs");
-setLogs(l.data.logs || []);
+      <ScanPanel />
 
-}catch(e){}
+      <div className="panel">
+        <h3>Scan Progress</h3>
 
-},2000);
+        <div className="progress-wrapper">
+          <div className="progress-bar">
+            <div
+              className="progress-fill"
+              style={{ width: progress + "%" }}
+            />
+          </div>
+          <p>{progress}%</p>
+        </div>
+      </div>
 
-return ()=>clearInterval(interval);
+      <VulnerabilityCards stats={stats} />
 
-},[]);
+      <div className="charts">
+        <SeverityChart stats={stats} />
+        <BugChart findings={findings} />
+      </div>
 
-return(
+      <div className="panel">
+        <h3>Live Engine Output</h3>
 
-<div className="dashboard">
+        <div className="console">
+          {logs.length === 0 ? (
+            <p>Waiting for scan...</p>
+          ) : (
+            logs.map((log, i) => (
+              <div key={i}>{"> " + log}</div>
+            ))
+          )}
+        </div>
+      </div>
 
-{/* TITLE */}
+      <ResultsTable findings={findings} />
 
-<h1 className="title">ARES‑X Security Scanner</h1>
-
-{/* SCAN PANEL */}
-
-<ScanPanel/>
-
-{/* PROGRESS BAR */}
-
-<div className="panel">
-
-<h3>Scan Progress</h3>
-
-<div className="progress-wrapper">
-
-<div className="progress-bar">
-
-<div
-className="progress-fill"
-style={{width:progress+"%"}}
-/>
-
-</div>
-
-<p>{progress}%</p>
-
-</div>
-
-</div>
-
-{/* VULNERABILITY CARDS */}
-
-<VulnerabilityCards stats={stats}/>
-
-{/* CHARTS */}
-
-<div className="charts">
-
-<SeverityChart stats={stats}/>
-
-<BugChart findings={findings}/>
-
-</div>
-
-{/* LIVE TERMINAL */}
-
-<div className="panel">
-
-<h3>Live Engine Output</h3>
-
-<div className="console">
-
-{logs.length === 0 ? (
-<p>Waiting for scan...</p>
-) : (
-logs.map((log,i)=>(
-<div key={i}>{"> "+log}</div>
-))
-)}
-
-</div>
-
-</div>
-
-{/* RESULTS TABLE */}
-
-<ResultsTable findings={findings}/>
-
-</div>
-
-)
-
+    </div>
+  );
 }

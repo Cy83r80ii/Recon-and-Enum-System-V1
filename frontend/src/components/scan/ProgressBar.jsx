@@ -1,46 +1,36 @@
-import {useEffect,useState} from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 
-export default function ProgressBar(){
+export default function ProgressBar() {
 
-const [progress,setProgress] = useState(0)
+  const [progress, setProgress] = useState(0)
 
-useEffect(()=>{
+  useEffect(() => {
 
-const interval=setInterval(async()=>{
+    const API = import.meta.env.VITE_API_URL;
 
-try{
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`${API}/progress`)
+        setProgress(res.data.progress)
+      } catch (e) {
+        console.error("Error fetching progress:", e)
+      }
+    }, 1000)
 
-const res = await axios.get("http://127.0.0.1:8001/progress")
+    return () => clearInterval(interval)
 
-setProgress(res.data.progress)
+  }, [])
 
-}catch(e){
-console.error("Error fetching progress:",e)
-}
-},1000)
-
-return ()=>clearInterval(interval)
-
-},[])
-
-return(
-
-<div className="progress-wrapper">
-
-<div className="progress-bar">
-
-<div
-className="progress-fill"
-style={{width:progress+"%"}}
-/>
-
-</div>
-
-<p>{progress}%</p>
-
-</div>
-
-)
-
+  return (
+    <div className="progress-wrapper">
+      <div className="progress-bar">
+        <div
+          className="progress-fill"
+          style={{ width: progress + "%" }}
+        />
+      </div>
+      <p>{progress}%</p>
+    </div>
+  )
 }

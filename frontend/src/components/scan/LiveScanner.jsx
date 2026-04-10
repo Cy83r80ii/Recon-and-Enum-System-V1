@@ -1,34 +1,32 @@
-import {useEffect,useState} from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 
-export default function LiveScanner(){
+export default function LiveScanner() {
 
-const [logs,setLogs]=useState([])
+  const [logs, setLogs] = useState([])
 
-useEffect(()=>{
+  useEffect(() => {
 
-const interval=setInterval(async()=>{
+    const API = import.meta.env.VITE_API_URL;
 
-const res=await axios.get("http://127.0.0.1:8001/logs")
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`${API}/logs`)
+        setLogs(res.data.logs)
+      } catch (err) {
+        console.error("Error fetching logs:", err)
+      }
+    }, 2000)
 
-setLogs(res.data.logs)
+    return () => clearInterval(interval)
 
-},2000)
+  }, [])
 
-return ()=>clearInterval(interval)
-
-},[])
-
-return(
-
-<div className="console">
-
-{logs.map((l,i)=>(
-<div key={i}>{"> "+l}</div>
-))}
-
-</div>
-
-)
-
+  return (
+    <div className="console">
+      {logs.map((l, i) => (
+        <div key={i}>{"> " + l}</div>
+      ))}
+    </div>
+  )
 }

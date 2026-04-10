@@ -1,11 +1,13 @@
 import axios from "axios"
 
+// 🔥 Use environment variable instead of localhost
 const API = axios.create({
-  baseURL: "http://127.0.0.1:8001"
+  baseURL: import.meta.env.VITE_API_URL
 })
 
-export const startScan = (target,mode) =>
-  API.post("/scan",{target,mode})
+// API calls
+export const startScan = (target, mode) =>
+  API.post("/scan", { target, mode })
 
 export const getResults = () =>
   API.get("/results")
